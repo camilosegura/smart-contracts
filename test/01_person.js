@@ -1,5 +1,10 @@
 var Person = artifacts.require('Person');
-var expect = require('chai').expect;
+var chai = require('chai');
+var chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
+
+var expect = chai.expect;
 
 contract("Testing the person contract", function(accounts) {
     describe("Deploy the person contract", function() {
@@ -22,7 +27,17 @@ contract("Testing the person contract", function(accounts) {
                 return personContract.name().then(function(response) {
                     expect(response.toString()).to.be.equal("Maria");
                 })
-            })
+            });
+
+            it("Use setName to reject the call from another account", function() {
+                return expect(personContract.setName("Pedro", {"from": accounts[1]})).to.be.eventually.rejected;
+            });
+
+            it("Chack first name is still the given name", function() {
+                return personContract.name().then(function(response) {
+                    expect(response.toString()).to.be.equal("Maria");
+                })
+            });
         })
     })
 });

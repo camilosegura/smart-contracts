@@ -1,8 +1,14 @@
 pragma solidity ^0.4.15;
 contract Person {
     string public name;
+    address public owner = msg.sender;
 
-    function setName(string _name) {
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function setName(string _name) onlyOwner {
         name = _name;
     }
 }
